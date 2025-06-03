@@ -2,14 +2,11 @@
 
 import React from 'react'
 
-interface props {
-  
-}
 
 const CategoryPicker = () => {
   return (
     <div>
-      
+      CategoryPicker
     </div>
   )
 }
