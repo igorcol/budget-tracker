@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import Logo from "./Logo";
+import Logo, { LogoMobile } from "./Logo";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -26,6 +26,7 @@ const items = [
 ];
 
 function MobileNavbar() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -37,7 +38,7 @@ function MobileNavbar() {
               <Menu />
             </Button>
           </SheetTrigger>
-          <SheetContent className="w-[400px] sm:w-[540px]" side="left">
+          <SheetContent className="w-[400px] sm:w-[540px] p-3" side="left">
             <Logo />
             <div className="fle flex-col gap-1 pt-4">
               {items.map((item) => (
@@ -45,17 +46,18 @@ function MobileNavbar() {
                   key={item.label}
                   link={item.link}
                   label={item.label}
+                  clickCallback={() => setIsOpen(prev => !prev)}
                 />
               ))}
             </div>
           </SheetContent>
         </Sheet>
         <div className="flex h-[80px] min-h-[60px] items-center gap-x-4">
-            <Logo/>
+            <LogoMobile/>
         </div>
         <div className="flex items-center gap-2">
             <ThemeSwitcherBtn/>
-            <UserButton/>
+            <UserButton signInUrl="/sign-in"/>
         </div>
       </nav>
     </div>
@@ -87,7 +89,7 @@ function DesktopNavbar() {
   );
 }
 
-function NavbarItem({ link, label }: { link: string; label: string }) {
+function NavbarItem({ link, label, clickCallback }: { link: string; label: string, clickCallback?: ()=>void}) {
   const pathname = usePathname();
   const isActive = pathname === link;
 
@@ -100,6 +102,9 @@ function NavbarItem({ link, label }: { link: string; label: string }) {
           "w-full justify-start text-lg text-muted-foreground hover:text-foreground",
           isActive && "text-foreground"
         )}
+        onClick={() => {
+          if (clickCallback) clickCallback()
+        }}
       >
         {label}
       </Link>
