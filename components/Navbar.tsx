@@ -1,17 +1,20 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import Logo from "./Logo";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { buttonVariants } from "./ui/button";
+import { Button, buttonVariants } from "./ui/button";
 import { UserButton } from "@clerk/nextjs";
 import { ThemeSwitcherBtn } from "./ThemeSwitcherBtn";
+import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
+import { Menu } from "lucide-react";
 
 const Navbar = () => {
   return (
     <>
       <DesktopNavbar />
+      <MobileNavbar />
     </>
   );
 };
@@ -21,6 +24,43 @@ const items = [
   { label: "Transactions", link: "/transactions" },
   { label: "Manage", link: "/manage" },
 ];
+
+function MobileNavbar() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="block border-separated bg-background md:hidden">
+      <nav className="container flex items-center justify-between px-8">
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button variant="ghost" size="icon">
+              <Menu />
+            </Button>
+          </SheetTrigger>
+          <SheetContent className="w-[400px] sm:w-[540px]" side="left">
+            <Logo />
+            <div className="fle flex-col gap-1 pt-4">
+              {items.map((item) => (
+                <NavbarItem
+                  key={item.label}
+                  link={item.link}
+                  label={item.label}
+                />
+              ))}
+            </div>
+          </SheetContent>
+        </Sheet>
+        <div className="flex h-[80px] min-h-[60px] items-center gap-x-4">
+            <Logo/>
+        </div>
+        <div className="flex items-center gap-2">
+            <ThemeSwitcherBtn/>
+            <UserButton/>
+        </div>
+      </nav>
+    </div>
+  );
+}
 
 function DesktopNavbar() {
   return (
@@ -39,8 +79,8 @@ function DesktopNavbar() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-            <ThemeSwitcherBtn />
-            <UserButton signInUrl="/sign-in" />
+          <ThemeSwitcherBtn />
+          <UserButton signInUrl="/sign-in" />
         </div>
       </nav>
     </div>
@@ -63,11 +103,9 @@ function NavbarItem({ link, label }: { link: string; label: string }) {
       >
         {label}
       </Link>
-      {
-        isActive && (
-            <div className="absolute -bottom-[2px] left-1/2 hidden h-[2px] w-[80%] -translate-x-1/2 rounded-xl bg-foreground md:block"></div>
-        )
-      }
+      {isActive && (
+        <div className="absolute -bottom-[2px] left-1/2 hidden h-[2px] w-[80%] -translate-x-1/2 rounded-xl bg-foreground md:block"></div>
+      )}
     </div>
   );
 }
