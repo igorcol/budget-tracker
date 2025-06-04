@@ -37,15 +37,16 @@ import { toast } from "sonner";
 
 interface props {
   type: TransactionType;
+  successCallback: (category: Category) => void;
 }
 
-function CreateCategoryDialog({ type }: props) {
+function CreateCategoryDialog({ type, successCallback }: props) {
   const [Open, setOpen] = useState(false);
   const form = useForm<CreateCategorySchemaType>({
     resolver: zodResolver(CreateCategorySchema),
     defaultValues: {
       type,
-      icon: "#️⃣"
+      icon: "#️⃣",
     },
   });
 
@@ -63,6 +64,8 @@ function CreateCategoryDialog({ type }: props) {
       toast.success(`Category ${data.name} created successfully 🎉`, {
         id: "create-category",
       });
+
+      successCallback(data);
 
       await queryClient.invalidateQueries({
         queryKey: ["categories"],
@@ -193,8 +196,8 @@ function CreateCategoryDialog({ type }: props) {
           </DialogClose>
           <Button onClick={form.handleSubmit(onSubmit)} disabled={isPending}>
             {!isPending && "Create"}
-            {isPending && <Loader className="animate-spin"/>}
-        </Button>
+            {isPending && <Loader className="animate-spin" />}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
