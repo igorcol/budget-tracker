@@ -1,5 +1,6 @@
 "use client"
 
+import CreateCategoryDialog from '@/components/CreateCategoryDialog'
 import { Button } from '@/components/ui/button'
 import { Command, CommandInput } from '@/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
@@ -39,6 +40,7 @@ const CategoryPicker = ({type}: props) => {
           <CommandInput
             placeholder='Search Category...'
           />
+          <CreateCategoryDialog type={type}/>
         </Command>
       </PopoverContent>
     </Popover>
