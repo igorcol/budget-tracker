@@ -9,13 +9,14 @@ import { TransactionType } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { useQuery } from '@tanstack/react-query'
 import { CheckIcon, ChevronsUpDown } from 'lucide-react'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 interface props {
   type: TransactionType
+  onChange: (value: string) => void
 }
 
-const CategoryPicker = ({type}: props) => {
+const CategoryPicker = ({type, onChange}: props) => {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
 
@@ -25,6 +26,11 @@ const CategoryPicker = ({type}: props) => {
     queryFn: () => fetch(`/api/categories?type=${type}`)
     .then(res => res.json())
   });
+
+  useEffect(() => {
+    if(!value) return
+    onChange(value)
+  }, [onChange, value])
 
   const selectedCategory = categoriesQuery.data?.find(
     (category: Category) => category.name === value
