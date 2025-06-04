@@ -5,7 +5,7 @@ import {
   CreateCategorySchemaType,
 } from "@/schema/categories";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
   Dialog,
@@ -18,7 +18,7 @@ import {
   DialogTrigger,
 } from "./ui/dialog";
 import { Button } from "./ui/button";
-import { CircleOff, PlusSquare } from "lucide-react";
+import { CircleOff, Loader, PlusSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Form,
@@ -30,6 +30,10 @@ import {
 } from "./ui/form";
 import { Input } from "./ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { CreateCategory } from "@/app/(dashboard)/_actions/categories";
+import { Category } from "@/lib/generated/prisma";
+import { toast } from "sonner";
 
 interface props {
   type: TransactionType;
@@ -41,8 +45,48 @@ function CreateCategoryDialog({ type }: props) {
     resolver: zodResolver(CreateCategorySchema),
     defaultValues: {
       type,
+      icon: "#️⃣"
     },
   });
+
+  const queryClient = useQueryClient();
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: CreateCategory,
+    onSuccess: async (data: Category) => {
+      form.reset({
+        name: "",
+        icon: "",
+        type,
+      });
+
+      toast.success(`Category ${data.name} created successfully 🎉`, {
+        id: "create-category",
+      });
+
+      await queryClient.invalidateQueries({
+        queryKey: ["categories"],
+      });
+
+      setOpen((prev) => !prev);
+    },
+    onError: () => {
+      toast.error("Something went wrong", {
+        id: "create-category",
+      });
+    },
+  });
+
+  // * On Submit
+  const onSubmit = useCallback(
+    async (values: CreateCategorySchemaType) => {
+      toast.loading("Creating category...", {
+        id: "create-category",
+      });
+      mutate(values);
+    },
+    [mutate]
+  );
 
   return (
     <Dialog open={Open} onOpenChange={setOpen}>
@@ -74,7 +118,7 @@ function CreateCategoryDialog({ type }: props) {
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form className="space-y-8">
+          <form className="space-y-8" onSubmit={form.handleSubmit(onSubmit)}>
             {/* Name input */}
             <FormField
               control={form.control}
@@ -147,9 +191,10 @@ function CreateCategoryDialog({ type }: props) {
               Cancel
             </Button>
           </DialogClose>
-           <Button>
-              Save
-            </Button>
+          <Button onClick={form.handleSubmit(onSubmit)} disabled={isPending}>
+            {!isPending && "Create"}
+            {isPending && <Loader className="animate-spin"/>}
+        </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
