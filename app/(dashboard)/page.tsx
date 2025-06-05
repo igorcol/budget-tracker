@@ -4,6 +4,7 @@ import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import React from "react";
 import CreateTransactionDialog from "./_components/CreateTransactionDialog";
+import Overview from "./_components/Overview";
 
 const page = async () => {
   const user = await currentUser();
@@ -23,6 +24,7 @@ const page = async () => {
         <div className="w-full flex flex-wrap items-center justify-between gap-6 py-8">
           <p className="text-3xl font-bold">Hello, {user.firstName}! 👋</p>
 
+          {/* Income & Exepnse Buttons */}
           <div className="flex items-center gap-3">
             <CreateTransactionDialog
               trigger={
@@ -43,6 +45,9 @@ const page = async () => {
           </div>
         </div>
       </div>
+
+      <Overview userSettings={userSettings} />
+
     </div>
   );
 };
