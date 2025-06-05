@@ -45,22 +45,22 @@ model Transaction {
 }
 
 model MonthHistory {
-  useId String
+  userId String
   day Int
   month Int
   year Int
   income Float
   expense Float
 
-  @@id([day, month, year, useId])
+  @@id([day, month, year, userId])
 }
 
 model YearHistory {
-  useId String
+  userId String
   month Int
   year Int
   income Float
   expense Float
 
-  @@id([month, year, useId])
+  @@id([month, year, userId])
 }
