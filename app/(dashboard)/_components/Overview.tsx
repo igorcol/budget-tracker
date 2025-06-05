@@ -10,7 +10,7 @@ interface props {
   userSettings: UserSettings;
 }
 
-function Overview() {
+function Overview({userSettings}: props) {
   const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>({
     from: startOfMonth(new Date()),
     to: new Date(),
