@@ -5,6 +5,8 @@ import { UserSettings } from "@/lib/generated/prisma";
 import { differenceInDays, startOfMonth } from "date-fns";
 import React, { useState } from "react";
 import { toast } from "sonner";
+import { date } from "zod";
+import StatsCards from "./StatsCards";
 
 interface props {
   userSettings: UserSettings;
@@ -17,8 +19,8 @@ function Overview({userSettings}: props) {
   });
 
   return (
-    <>
-      <div className="flex flex-wrap items-center justify-between gap-2 px-7 py-6">
+    <div className="flex flex-col justify-between gap-2 px-7 py-6">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-3xl font-bold">Overview</h2>
         <div className="flex items-center gap-3">
           <DateRangePicker
@@ -42,7 +44,13 @@ function Overview({userSettings}: props) {
           />
         </div>
       </div>
-    </>
+      
+      <StatsCards 
+        userSettings={userSettings}
+        from={dateRange.from}
+        to={dateRange.to}
+      />
+    </div>
   );
 }
 
